@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>time table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid black; /* Bold outer border for the whole timetable */
+        }
+
+        th, td {
+            border: 1px solid black; /* Black borders for all cells */
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        thead th {
+            background-color: #ffffff;
+            color: black;
+            font-size: 1.1em;
+        }
+
+        tfoot td {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+
+        /* Row Color Options */
+        .row-alt-1 { background-color: #e6dbba; }
+        .row-alt-2 { background-color: #e6dbba; }
+
+        /* Highlight Classes */
+        .header-title {
+            background-color: #ffffff;
+            color: #000000;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .header-notice {
+            background-color: #e67e22;
+            color: white;
+            font-weight: bold;
+        }
+
+        .period-header {
+            background-color: #ffffff;
+            color: black;
+            font-weight: bold;
+        }
+
+        .lab-hour {
+            background-color: #d4efdf; /* Soft Green for Lab */
+            font-weight: bold;
+            color: #145a32;
+            padding: 0 !important; 
+        }
+
+        .elective-hour {
+            background-color: #fdebd0; /* Soft Orange for Elective */
+            font-weight: bold;
+            color: #784212;
+        }
+
+        .merged-column {
+            background-color: #ebdef0; /* Soft Purple for Merged Break/Lunch/Activity columns */
+            font-weight: bold;
+            color: #512e5f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .standard-cell {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Class Time Table</h1>
+
+    <table>
+        <!-- Table Header -->
+        <thead>
+            <tr class="row-alt-1">
+                <th colspan="2" class="header-title">
+                    <img src="TJ.JPG" alt="College Logo" style="height: 40px; vertical-align: middle;">
+                </th>
+                <th colspan="3" class="header-title">Semester: V <br> <span style="font-size: 0.8em; font-weight: normal;">Odd Sem</span></th>
+                <th colspan="3" class="header-title">Academic Year: 2026-27</th>
+            </tr>
+            <tr>
+                <th colspan="8">CSE S5 - 'A'</th>
+            </tr>
+        </thead>
+
+        <!-- Table Footer -->
+        <tfoot>
+            <tr>
+                <td colspan="8"></td>
+            </tr>
+        </tfoot>
+
+        <tbody>
+            <!-- Period Header Row -->
+            <tr class="row-alt-1 period-header">
+                <td>1<br><span style="font-size: 0.8em; font-weight: normal;">8:45-9:45</span></td>
+                <td>2<br><span style="font-size: 0.8em; font-weight: normal;">9:45-10:45</span></td>
+                <td>SHORT BREAK<br><span style="font-size: 0.8em; font-weight: normal;">10:45-11:00</span></td>
+                <td>3<br><span style="font-size: 0.8em; font-weight: normal;">11:00-12:00</span></td>
+                <td>4<br><span style="font-size: 0.8em; font-weight: normal;">12:00-1:00</span></td>
+                <td>LUNCH BREAK<br><span style="font-size: 0.8em; font-weight: normal;">1:00-1:45</span></td>
+                <td>5<br><span style="font-size: 0.8em; font-weight: normal;">1:45-2:45</span></td>
+                <td>6<br><span style="font-size: 0.8em; font-weight: normal;">2:45-3:45</span></td>
+            </tr>
+
+            <!-- 4th Row -->
+            <tr class="row-alt-2">
+                <td class="standard-cell">SE&PM</td>
+                <td class="standard-cell">Placement</td>
+                <td rowspan="6" class="merged-column">SHORT BREAK</td>
+                <td class="standard-cell">USP</td>
+                <td class="standard-cell">CN</td>
+                <td rowspan="6" class="merged-column">LUNCH BREAK</td>
+                <td class="lab-hour" colspan="2">
+                    <div style="padding: 12px; border-bottom: 1px solid black;">WEB LAB - Batch A</div>
+                    <div style="padding: 12px;">CN LAB - Batch B</div>
+                </td>
+            </tr>
+
+            <!-- 5th Row -->
+            <tr class="row-alt-1">
+                <td class="standard-cell">RM&IPR</td>
+                <td class="standard-cell">CN</td>
+                <td class="lab-hour" colspan="2">MINI PROJECT</td>
+                <td class="standard-cell">SE&PM</td>
+                <td class="standard-cell">Placement</td>
+            </tr>
+
+            <!-- 6th Row -->
+            <tr class="row-alt-2">
+                <td class="lab-hour" colspan="2">
+                    <div style="padding: 12px; border-bottom: 1px solid black;">CN LAB - Batch A</div>
+                    <div style="padding: 12px;">WEB LAB - Batch B</div>
+                </td>
+                <td class="standard-cell">CN</td>
+                <td class="standard-cell">USP</td>
+                <td class="standard-cell">Placement</td>
+                <td class="standard-cell">RM & IPR</td>
+            </tr>
+
+            <!-- 7th Row -->
+            <tr class="row-alt-1">
+                <td class="standard-cell">EVS</td>
+                <td class="standard-cell">USP</td>
+                <td class="standard-cell">TOC</td>
+                <td class="standard-cell">Placement</td>
+                <td class="standard-cell">TOC</td>
+                <td class="standard-cell">CLUB</td>
+            </tr>
+
+            <!-- 8th Row -->
+            <tr class="row-alt-2">
+                <td class="standard-cell">TOC</td>
+                <td class="standard-cell">TOC</td>
+                <td class="standard-cell">RM & IPR</td>
+                <td class="standard-cell">Placement</td>
+                <td class="lab-hour" colspan="2">MINI PROJECT</td>
+            </tr>
+
+            <!-- 9th Row -->
+            <tr class="row-alt-1">
+                <td class="standard-cell">RM & IPR</td>
+                <td class="standard-cell">CN</td>
+                <td class="standard-cell">SE & PM </td>
+                <td class="standard-cell">TOC</td>
+                <td class="standard-cell">Library</td>
+                <td class="standard-cell">NCMC</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
