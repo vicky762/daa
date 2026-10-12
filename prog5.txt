@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newspaper Page | vtucode</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header, footer {
+            background: #7b38f7;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px #0000001a;
+        }
+
+        header > a {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        header a, nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        nav a {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .content {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            padding: 25px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 1px 2px #091e423f;
+        }
+
+        article {
+            padding: 15px;
+            background: white;
+            border-radius: 7px;
+            box-shadow: 0 1px 2px #091e423f;
+            transition: 0.3s;
+        }
+
+        article:hover {
+            background: #e7ddfb;
+            transform: translateY(-3px);
+        }
+
+        article h2 {
+            color: #7b38f7;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+        }
+
+        article p {
+            line-height: 1.5;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        figure {
+            padding: 10px;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        figure img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        figcaption {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        aside {
+            width: 300px;
+            flex-shrink: 0;
+            height: fit-content;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            color: #333;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 4px 6px #0000001a;
+        }
+
+        .related-news h3, section h2 {
+            background: black;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .related-news h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        .related-news ul {
+            padding: 7px 20px;
+        }
+
+        .related-news li {
+            margin-bottom: 12px;
+        }
+
+        .related-news a {
+            color: #7b38f7;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .related-news a:hover {
+            text-decoration: underline;
+        }
+
+        section {
+            width: 100%;
+            margin: 40px 0 50px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px #091e423f;
+        }
+
+        section h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        caption {
+            background: #d9d9d9;
+            padding: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            border-radius: 8px 8px 0 0;
+        }
+
+        thead {
+            background: #007bff;
+            color: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background: #eaeaea;
+        }
+
+        footer {
+            margin-top: auto;
+            font-size: 18px;
+        }
+
+        @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+
+            .main-content {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            aside {
+                width: 100%;
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                justify-content: center;
+            }
+
+            nav {
+                gap: 12px;
+            }
+
+            nav a {
+                font-size: 15px;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 13px;
+            }
+
+            section {
+                padding: 10px;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="#">Newspaper</a>
+
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+            <a href="#">Services</a>
+            <a href="#">Marketing</a>
+            <a href="#">Updates</a>
+        </nav>
+    </header>
+
+    <div class="content">
+
+        <main class="main-content">
+
+            <article>
+                <h2>Artificial Intelligence Transforming the World</h2>
+                <figure>
+                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80"
+                         alt="Artificial intelligence technology">
+                    <figcaption>The future of artificial intelligence</figcaption>
+                </figure>
+                <p>Artificial intelligence is changing the way people live and work. From virtual assistants to self-driving vehicles, AI helps businesses improve productivity and solve complex problems. Responsible use of this technology will play an important role in the future.</p>
+            </article>
+
+            <article>
+                <h2>Technology Improves Education</h2>
+                <figure>
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80"
+                         alt="Students learning in a classroom">
+                    <figcaption>Technology in modern classrooms</figcaption>
+                </figure>
+                <p>Digital technology has made education more accessible to students around the world. Online classes, educational apps, and digital libraries allow learners to study at their own pace. Teachers also use technology to make lessons more interactive and engaging.</p>
+            </article>
+
+            <article>
+                <h2>The Importance of a Healthy Lifestyle</h2>
+                <figure>
+                    <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80"
+                         alt="Healthy fruits and nutritious food">
+                    <figcaption>Healthy food for a healthy life</figcaption>
+                </figure>
+                <p>Maintaining a healthy lifestyle is essential for physical and mental well-being. Eating nutritious food, exercising regularly, getting enough sleep, and drinking sufficient water can help people stay active. Small daily habits can make a meaningful difference to long-term health.</p>
+            </article>
+
+            <article>
+                <h2>Renewable Energy for a Greener Future</h2>
+                <figure>
+                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=600&q=80"
+                         alt="Solar panels producing renewable energy">
+                    <figcaption>Clean energy for tomorrow</figcaption>
+                </figure>
+                <p>Renewable energy sources such as sunlight and wind offer cleaner alternatives to fossil fuels. Many countries are investing in solar panels and wind farms to reduce pollution and carbon emissions. Using energy efficiently is another important step toward protecting the environment.</p>
+            </article>
+
+            <article>
+                <h2>Digital Payments Transform Business</h2>
+                <figure>
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80"
+                         alt="Customer making a digital payment">
+                    <figcaption>The growth of digital transactions</figcaption>
+                </figure>
+                <p>Digital payments have made shopping and business transactions faster and more convenient. Customers can pay using mobile apps, cards, and QR codes instead of carrying cash. Businesses can maintain digital records and serve customers more efficiently while protecting financial information.</p>
+            </article>
+
+            <article>
+                <h2>Young People Leading Environmental Change</h2>
+                <figure>
+                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80"
+                         alt="Nature and environmental protection">
+                    <figcaption>Working together for a greener planet</figcaption>
+                </figure>
+                <p>Young people are taking action to protect the environment through tree planting, recycling, and community clean-up campaigns. These activities raise awareness about environmental problems and encourage responsible habits. Even small contributions can help create cleaner and healthier communities.</p>
+            </article>
+
+        </main>
+
+        <aside class="related-news">
+            <h3>Related News</h3>
+            <ul>
+                <li><a href="#">Latest Developments in Artificial Intelligence</a></li>
+                <li><a href="#">New Trends in Online Education</a></li>
+                <li><a href="#">Simple Ways to Reduce Plastic Waste</a></li>
+            </ul>
+        </aside>
+
+    </div>
+
+    <section>
+        <h2>Recent Posts</h2>
+
+        <table>
+            <caption>List of Posts</caption>
+            <thead>
+                <tr>
+                    <th>Post Title</th>
+                    <th>Date</th>
+                    <th>Author</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>The Future of Artificial Intelligence</td>
+                    <td>2026-10-10</td>
+                    <td>Rahul Sharma</td>
+                </tr>
+                <tr>
+                    <td>Digital Learning in Modern Classrooms</td>
+                    <td>2026-10-09</td>
+                    <td>Priya Patel</td>
+                </tr>
+                <tr>
+                    <td>Building a Greener Tomorrow</td>
+                    <td>2026-10-08</td>
+                    <td>Amit Kumar</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Newspaper. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
