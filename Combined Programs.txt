@@ -1,0 +1,259 @@
+Prog1.tcl
+set ns [new Simulator]
+set nf [open prog1.nam w]
+$ns namtrace-all $nf
+set nd [open prog1.tr w]
+$ns trace-all $nd
+proc finish { } {
+global ns nf nd
+$ns flush-trace
+close $nf
+close $nd
+exec nam prog1.nam &
+exit 0
+}
+#create 3 nodes
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+#connect nodes
+$ns duplex-link $n0 $n1 1Mb 10ms DropTail
+$ns duplex-link $n1 $n2 512kb 10ms DropTail
+#set queue size
+$ns queue-limit $n1 $n2 10
+#create UDP agent and attach it with node
+set udpo [new Agent/UDP]
+$ns attach-agent $n0 $udpo
+#create cbr and connect to udp /connect crb traffic
+set cbro [new Application/Traffic/CBR]
+$cbro set packetSize 500
+$cbro set interval 0.005
+$cbro attach-agent $udpo
+#creates data sink (reciever)
+set sink [new Agent/Null]
+$ns attach-agent $n2 $sink
+$ns connect $udpo $sink
+#schedule events
+$ns at 0.2 "$cbro start"
+$ns at 4.5 "$cbro stop"
+$ns at 5.0 "finish"
+$ns run
+
+Prog1.awk
+BEGIN{
+dcount = 0;
+rcount = 0;
+}
+{
+event = $1;
+if(event == "d")
+dcount++;
+{
+}
+if(event=="r")
+rcount++;
+{
+}
+}
+END{
+printf("the no. of packets dropped:%d\n",dcount);
+printf("the no. of packets recived: %d\n",rcount);
+}
+
+
+Prog2.tcl
+set ns [new Simulator]
+set nf [open prog2.nam w]
+$ns namtrace-all $nf
+set nd [open prog2.tr w]
+$ns trace-all $nd
+proc finish {} {
+global ns nf nd
+$ns flush-trace
+close $nf
+close $nd
+exec nam prog2.nam &
+exit 0
+}
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+set n3 [$ns node]
+set n4 [$ns node]
+set n5 [$ns node]
+set n6 [$ns node]
+$ns duplex-link $n1 $n0 1Mb 10ms DropTail
+$ns duplex-link $n2 $n0 1Mb 10ms DropTail
+$ns duplex-link $n3 $n0 1Mb 10ms DropTail
+$ns duplex-link $n4 $n0 1Mb 10ms DropTail
+$ns duplex-link $n5 $n0 1Mb 10ms DropTail
+$ns duplex-link $n6 $n0 1Mb 10ms DropTail
+Agent/Ping instproc recv {from rtt} {
+$self instvar node_
+puts "node [$node_ id] recieved ping answer from $from with round-trip-time rtt ms."
+}
+set p1 [new Agent/Ping]
+set p2 [new Agent/Ping]
+set p3 [new Agent/Ping]
+set p4 [new Agent/Ping]
+set p5 [new Agent/Ping]
+set p6 [new Agent/Ping]
+$ns attach-agent $n1 $p1
+$ns attach-agent $n2 $p2
+$ns attach-agent $n3 $p3
+$ns attach-agent $n4 $p4
+$ns attach-agent $n5 $p5
+$ns attach-agent $n6 $p6
+
+$ns queue-limit $n0 $n4 3
+$ns queue-limit $n0 $n5 2
+$ns queue-limit $n0 $n6 2
+$ns connect $p1 $p4
+$ns connect $p2 $p5
+$ns connect $p3 $p6
+$ns at 0.2 "$p1 send"
+$ns at 0.4 "$p2 send"
+$ns at 0.6 "$p3 send"
+$ns at 1.0 "$p4 send"
+$ns at 1.2 "$p5 send"
+$ns at 1.4 "$p6 send"
+$ns at 2.0 "finish"
+$ns run
+
+
+set ns [new Simulator]
+set nf [open prg3.nam w]
+$ns namtrace-all $nf
+set ind [open prg3.tr w]
+$ns trace-all $nd
+$ns color 1 Blue
+$ns color 2 Red
+proc finish {} {
+global ns nf nd
+$ns flush-trace
+close $nf
+close $nd
+exec nam prg3.nam &
+exit 0
+}
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+set n3 [$ns node]
+set n4 [$ns node]
+set n5 [$ns node]
+set n6 [$ns node]
+set n7 [$ns node]
+set n8 [$ns node]
+$n7 shape box
+$n7 color Blue
+$n8 shape hexagon
+$n8 color Red
+$ns duplex-link $n1 $n0 2Mb 10ms DropTail
+$ns duplex-link $n2 $n0 2Mb 10ms DropTail
+$ns duplex-link $n0 $n3 1Mb 20ms DropTail
+$ns make-lan "$n3 $n4 $n5 $n6 $n7 $n8" 512Kb 40ms LL Queue/DropTail Mac/802_3
+$ns duplex-link-op $n1 $n0 orient right-down
+$ns duplex-link-op $n2 $n0 orient right-up
+$ns duplex-link-op $n0 $n3 orient right
+$ns queue-limit $n0 $n3 20
+set tcp1 [new Agent/TCP/Vegas]
+$ns attach-agent $n1 $tcp1
+set sink1 [new Agent/TCPSink]
+$ns attach-agent $n7 $sink1
+$ns connect $tcp1 $sink1
+$tcp1 set class 1
+$tcp1 set packetsize_55
+set ftp1 [new Application/FTP]
+$ftp1 attach-agent $tcp1
+set tfile [open cwnd.tr w]
+$tcp1 attach $tfile
+$tcp1 trace cwnd_
+set tcp2 [new Agent/TCP/Reno]
+$ns attach-agent $n2 $tcp2
+set sink2 [new Agent/TCPSink]
+$ns attach-agent $n8 $sink2
+$ns connect $tcp2 $sink2
+$tcp2 set class 2
+$tcp2 set packetSize_55
+set ftp2 [new Application/FTP]
+$ftp2 attach-agent $tcp2
+set tfile2 [open cwnd2.tr w]
+$tcp2 attach $tfile2
+$tcp2 trace cwnd_
+$ns at 0.5 "$ftp1 start"
+$ns at 1.0 "$ftp2 start"
+$ns at 5.0 "$ftp2 stop"
+$ns at 5.0 "$ftp1 stop"
+$ns at 5.5 "finish"
+$ns run
+
+
+Exp-4 Develop a program for error detecting code using CRC-CCITT (16-bits)
+
+import java.util.Scanner;
+
+class crc
+{
+public static void main(String args[])
+{
+Scanner sc = new Scanner(System.in);
+//Input Data Stream i.e creates object that reads data given by keyboard
+System.out.print("Enter data stream: ");
+String datastream = sc.nextLine();
+System.out.print("Enter generator: ");
+String generator = sc.nextLine();
+int data[] = new int [datastream.length() + generator.length()-1];
+int divisor[] = new int [generator.length()];
+//if not digit change it to digit
+for(int i=0;i<datastream.length();i++)
+data[i] = Integer.parseInt(datastream.charAt(i)+"");
+for(int i=0;i<generator.length();i++)
+divisor[i] = Integer.parseInt(generator.charAt(i)+"");
+//Calculation of CRC
+for(int i=0;i<datastream.length();i++)
+{
+if (data[i]==1)
+for(int j=0;j<divisor.length;j++)
+data [i+j] ^= divisor[j];
+}
+//Display CRC
+System.out.print("The CRC code is: ");
+for(int i=0;i<datastream.length();i++)
+data[i] = Integer.parseInt(datastream.charAt(i)+"");
+for(int i=0;i<data.length;i++)
+System.out.print(data[i]);
+System.out.println();
+//Check for input CRC code
+System.out.print("Enter CRC code: ");
+datastream = sc.nextLine();
+System.out.print("Enter generator: ");
+generator = sc.nextLine();
+data = new int [datastream.length() + generator.length()-1];
+divisor = new int [generator.length()];
+for(int i=0;i<datastream.length();i++)
+data[i] = Integer.parseInt(datastream.charAt(i)+"");
+for(int i=0;i<generator.length();i++)
+divisor[i] = Integer.parseInt(generator.charAt(i)+"");
+//Calculation of remainder
+for(int i=0;i<datastream.length();i++)
+{
+if (data[i]==1)
+for(int j=0;j<divisor.length;j++)
+data [i+j] ^= divisor[j];
+}
+//Display validity of data
+boolean valid = true;
+for(int i=0;i<data.length;i++) {
+if (data[i] == 1)
+{
+valid = false;
+break;
+}
+}
+if(valid==true)
+System.out.println("Data stream is valid");
+else
+System.out.println("Data stream is invalid. CRC error occured.");
+}
+}
