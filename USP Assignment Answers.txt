@@ -1,0 +1,228 @@
+1. Explain the Unix system architecture and the role of POSIX and Single UNIX Specification in maintaining portability across Unix implementations.
+
+UNIX SYSTEM ARCHITECTURE:
+The main concept in the UNIX architecture is the division of labor between two agencies: the Kernel and the Shell, along with the Applications layer. The architecture is supported by two simple entities: the file and the process.
+
+1. Kernel:
+- The kernel is the core of the operating system—a collection of routines mostly written in C.
+- It is loaded into memory when the system is booted and communicates directly with the hardware.
+- It acts as a bridge between the hardware and the user, handling files, memory management, devices, process scheduling, priorities, and networking.
+- User applications/programs that need to access the hardware use the services of the kernel through a set of functions called system calls (e.g., open, write).
+
+2. Shell:
+- The shell is the command interpreter that acts as the interface between the user and the kernel. It translates commands typed into the terminal into actions.
+- While a system contains only one kernel, there may be several shells in action (e.g., Bourne shell [sh], C shell [csh], Korn shell [ksh], Bash).
+- When a user enters a command, the shell thoroughly examines the input for special/meta characters, rebuilds a simplified command line (such as compressing extra spaces), and finally communicates with the kernel to execute the command.
+
+3. Applications & Utilities:
+- This outer layer includes UNIX commands (like grep, sed, who, ls, cp), compilers (cc), text processors, database management programs, X Window, and user applications.
+
+4. File and Process:
+- File: An array of bytes that can contain virtually anything. UNIX considers even directories and devices as files, arranged in a single hierarchical tree structure starting from root (/).
+- Process: The name given to a file when it is executed as a program (a time image of an executable file). Like files, processes belong to a hierarchical tree structure having parents, children, and grand-children.
+
+ROLE OF POSIX AND SINGLE UNIX SPECIFICATION (SUS) IN PORTABILITY:
+1. POSIX (Portable Operating System Interface):
+- POSIX is a family of standards developed by the IEEE (Institute of Electrical and Electronics Engineers) for operating systems, specifically UNIX.
+- Its goal is to promote the portability of applications among various UNIX system environments by defining the standard services and interfaces an operating system must provide to be "POSIX compliant".
+- Two key standards from the POSIX family are:
+  * POSIX.1 (IEEE 1003.1): Deals with the C application program interface (API) and operating system interface.
+  * POSIX.2 (IEEE 1003.2): Deals with the shell and utilities.
+
+2. Single UNIX Specification (SUS):
+- X/Open (later merged into The Open Group) developed the X/Open Portability Guide (XPG) to improve application portability across all UNIX implementations.
+- The Single UNIX Specification (SUS) is a superset of the POSIX.1 standard that specifies additional interfaces (like the X/Open System Interfaces or XSI option) extending POSIX.1 functionality. Only XSI-conforming implementations can legally use the UNIX trademark.
+- In 2001, X/Open (The Open Group) and IEEE unified their standards into SUSv3 (Single UNIX Specification Version 3 / IEEE 1003.1-2001), later updated to SUSv4 (POSIX.1-2008).
+- This unification is based on the "write once, adopt anywhere" approach: once software has been developed on any POSIX-compliant UNIX system, it can be easily ported to another POSIX-compliant UNIX system with minimum or no modification.
+
+
+================================================================================
+
+
+2. Explain how file permissions are represented and modified using symbolic and absolute (octal) modes with chmod. Discuss the significance of the umask command.
+
+REPRESENTATION OF FILE PERMISSIONS:
+Every file and directory in UNIX has nine access permission bits divided into three categories of users, with three permissions each (visible via ls -l, e.g., -rwxr-xr--):
+- Categories: User/Owner (u), Group (g), and Others (o).
+- Permissions: Read (r), Write (w), and Execute (x), while a hyphen (-) indicates the absence of a permission.
+  * Read (r): Grants permission to read a file or list directory entries.
+  * Write (w): Grants permission to modify a file or create/remove files in a directory.
+  * Execute (x): Grants permission to execute a regular file as a program or search/pass through a directory.
+
+MODIFYING PERMISSIONS WITH chmod:
+Only the owner of the file (or the superuser/root) can change file permissions using the chmod command. It can be used in two modes:
+
+1. Symbolic (Relative) Mode:
+In relative mode, chmod only changes the permissions specified in the command line and leaves the other permissions unchanged.
+Syntax:
+chmod category operation permission filename(s)
+
+- Category:
+  u - user (owner)
+  g - group
+  o - others
+  a - all (ugo)
+- Operation:
+  + - assign permission
+  - - remove permission
+  = - assign absolute permission for the specified category
+- Permission:
+  r - read
+  w - write
+  x - execute
+
+Examples:
+- chmod u+x xstart : Assigns (+) execute (x) permission to the user/owner (u) on file xstart.
+- chmod ugo+x xstart (or chmod a+x xstart) : Assigns execute permission to all categories.
+- chmod go-r xstart : Removes (-) read (r) permission from group (g) and others (o).
+
+2. Absolute (Octal) Mode:
+In absolute mode, all nine permissions are set explicitly without needing to know the current file permissions. A string of three octal digits is used as an expression (one digit for each category: User, Group, Others, from left to right).
+For each category, the octal digits are added together:
+- Read permission (r) = 4 (octal 100)
+- Write permission (w) = 2 (octal 010)
+- Execute permission (x) = 1 (octal 001)
+
+Octal Table:
+0 : --- (No permissions)
+1 : --x (Execute only)
+2 : -w- (Write only)
+3 : -wx (Write & Execute)
+4 : r-- (Read only)
+5 : r-x (Read & Execute)
+6 : rw- (Read & Write)
+7 : rwx (Read, Write, & Execute)
+
+Examples:
+- chmod 644 xstart : Sets rw- for user (6), r-- for group (4), and r-- for others (4) (-rw-r--r--).
+- chmod 761 xstart : Assigns all permissions (rwx = 7) to user, read and write (rw- = 6) to group, and execute only (--x = 1) to others (-rwxrw---x).
+- chmod 777 xstart : Assigns all permissions for all categories (-rwxrwxrwx).
+
+SIGNIFICANCE OF THE umask COMMAND:
+- Every process has a file mode creation mask, controlled by the built-in shell command and system call umask, which determines the default permissions for any newly created file or directory.
+- Whenever a process creates a new file (via open or creat) or directory (via mkdir), any bits that are ON (set) in the umask value are turned OFF (masked/denied) in the newly created file's permissions.
+- The umask value is expressed in octal (or symbolic mode using umask -S), where each bit represents a permission to be masked off:
+  * User: 0400 (read), 0200 (write), 0100 (execute)
+  * Group: 0040 (read), 0020 (write), 0010 (execute)
+  * Other: 0004 (read), 0002 (write), 0001 (execute)
+- Common umask values:
+  * 002: Prevents others from writing to your newly created files.
+  * 022: Prevents group members and others from writing to your files (e.g., default 666 for files becomes 644 [-rw-r--r--], and 777 for directories becomes 755 [drwxr-xr-x]).
+  * 027: Prevents group members from writing to your files and others from reading, writing, or executing your files.
+- Significance: It is usually set once at login in the shell's start-up file to enforce security and privacy defaults automatically, ensuring users do not accidentally create universally writable files. Changing the mask in a child process does not affect the mask of its parent shell.
+
+
+================================================================================
+
+
+3. Write regular expressions using grep and egrep to accomplish the following:
+a) Match lines starting with a capital letter and ending with a digit.
+b) Extract valid email addresses from a text file.
+c) Match phone numbers formatted as XXX-XXX-XXXX.
+
+a) Match lines starting with a capital letter and ending with a digit:
+Using grep:
+grep '^[A-Z].*[0-9]$' filename.txt
+
+Using egrep (or grep -E):
+egrep '^[A-Z].*[0-9]$' filename.txt
+
+b) Extract valid email addresses from a text file:
+Using egrep (or grep -E):
+egrep -o '[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z][a-zA-Z]+' filename.txt
+
+Using grep:
+grep -o '[a-zA-Z0-9._+-][a-zA-Z0-9._+-]*@[a-zA-Z0-9.-][a-zA-Z0-9.-]*\.[a-zA-Z][a-zA-Z]*' filename.txt
+
+c) Match phone numbers formatted as XXX-XXX-XXXX:
+Using grep:
+grep '[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]' filename.txt
+
+Using egrep (or grep -E):
+egrep '[0-9]{3}-[0-9]{3}-[0-9]{4}' filename.txt
+
+
+================================================================================
+
+
+4. Write a shell script that accepts a directory name as a command-line argument and counts the number of regular files, subdirectories, and executable files present in it.
+
+SCRIPT (count_files.sh):
+
+#!/bin/sh
+# Shell script to count regular files, subdirectories, and executable files
+
+if [ $# -ne 1 ]
+then
+    echo "Usage: $0 <directory_name>"
+    exit 1
+fi
+
+if [ ! -d "$1" ]
+then
+    echo "Error: $1 is not a valid directory."
+    exit 1
+fi
+
+reg_files=0
+sub_dirs=0
+exec_files=0
+
+for item in "$1"/*
+do
+    if [ -d "$item" ]
+    then
+        sub_dirs=$(expr $sub_dirs + 1)
+    elif [ -f "$item" ]
+    then
+        reg_files=$(expr $reg_files + 1)
+        if [ -x "$item" ]
+        then
+            exec_files=$(expr $exec_files + 1)
+        fi
+    fi
+done
+
+echo "Directory: $1"
+echo "Number of regular files: $reg_files"
+echo "Number of subdirectories: $sub_dirs"
+echo "Number of executable files: $exec_files"
+
+
+================================================================================
+
+
+5. Write a menu-driven shell script using case and positional parameters to perform basic arithmetic operations (+, -, *, /) passed via command-line arguments.
+
+SCRIPT (arith_menu.sh):
+
+#!/bin/sh
+# Menu-driven shell script to perform basic arithmetic operations on positional parameters
+
+if [ $# -lt 2 ]
+then
+    echo "Usage: $0 <num1> <num2>"
+    exit 1
+fi
+
+echo "\t ARITHMETIC MENU \n 1. Addition (+)\n 2. Subtraction (-)\n 3. Multiplication (*)\n 4. Division (/)\n 5. Quit\n"
+echo "Enter your option (1-5 or +, -, *, /): \c"
+read choice
+
+case "$choice" in
+    1|+) res=$(expr $1 + $2)
+         echo "Result: $1 + $2 = $res" ;;
+    2|-) res=$(expr $1 - $2)
+         echo "Result: $1 - $2 = $res" ;;
+    3|\*) res=$(expr $1 \* $2)
+          echo "Result: $1 * $2 = $res" ;;
+    4|/) if [ $2 -eq 0 ]
+         then
+             echo "Error: Division by zero is not allowed."
+         else
+             res=$(expr $1 / $2)
+             echo "Result: $1 / $2 = $res"
+         fi ;;
+    5) exit 0 ;;
+    *) echo "Invalid Option!" ;;
+esac
